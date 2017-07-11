@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta charset='utf8'>
+    <title>SeoLog</title>
+    <link rel="stylesheet" href="css/materialize.min.css"> 
+    <link rel="stylesheet" href="css/geeky-log.css"> 
+</head>
+<body>
+  
+    <nav>
+        <div class="nav-wrapper">
+          <b id="logo">My Geeky Log</b>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+          </ul>
+        </div>
+    </nav> 
+    
+    <h2>Broken links</h2>
+    
+    <div class='table'>
+        <h3>404 timeline</h3>
+        <svg id="statusStack" width="1200" height="400"></svg> 
+    </div>
+    
+    <div class='table'>
+        <div id="broken-links"></div>
+    </div> 
+    
+    
+    <p></p>    
+    <footer class="page-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">My Geeky Log</h5>
+                    <p class="grey-text text-lighten-4">Data Mining : Linux commands</br>Data visualization : d3js + materializecss<br>All data is available in CSV</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Links</h5>
+                    <ul>
+                        <li><a class="grey-text text-lighten-3" href="#!">Github</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#!">@tiropcom</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#!">http://www.tirop.com/</a></li>
+                    </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+                Free Open source 
+                <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            </div>
+        </div>
+    </footer>
+    <script src="js/d3.v4.min.js"></script>
+    <script src="js/geeky-log.js"></script>
+    <script> 
+    createStack( "statusStack", "status-404-by-date.csv" );
+    createTable2( "broken-links", "broken-links.csv", "From", "To", 50 );
+    </script>
+</body>
+</html>
