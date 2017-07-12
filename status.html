@@ -75,8 +75,8 @@
                 <div class="col l4 offset-l2 s12">
                     <h5 class="white-text">Links</h5>
                     <ul>                      
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Github</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">@tiropcom</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Get the source code on Github</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">Follow me on Twitter : @tiropcom</a></li>
                         <li><a class="grey-text text-lighten-3" href="http://www.tirop.com/">http://www.tirop.com/</a></li>
                     </ul>
               </div>
@@ -92,14 +92,14 @@
     <script src="js/d3.v4.min.js"></script>
     <script src="js/geeky-log.js"></script>
     <script>
-    createPie( "statusAll", "status-all-gbot.csv", true );
-    createPie( "statusSearch", "status-gbot.csv", true );
-    createStack( "statusStack", "status-by-date.csv" );
-    createTable( "status301", "status-gbot-301.csv", "URL", 10 ); 
-    createTable( "status302", "status-gbot-302.csv", "URL", 10 ); 
-    createTable( "status404", "status-gbot-404.csv", "URL", 10 ); 
-    createTable( "status410", "status-gbot-410.csv", "URL", 10 ); 
-    createTable( "status5xx", "status-gbot-5xx.csv", "URL", 10 );
+    createPie( "statusAll", "status-all-gbot.tsv", true );
+    createPie( "statusSearch", "status-gbot.tsv", true );
+    createStack( "statusStack", "status-by-date.tsv" );
+    createTableTSV( "status301", "status-gbot-301.tsv", "URL", 10 ); 
+    createTableTSV( "status302", "status-gbot-302.tsv", "URL", 10 ); 
+    createTableTSV( "status404", "status-gbot-404.tsv", "URL", 10 ); 
+    createTableTSV( "status410", "status-gbot-410.tsv", "URL", 10 ); 
+    createTableTSV( "status5xx", "status-gbot-5xx.tsv", "URL", 10 );
     </script>
 </body>
 </html>

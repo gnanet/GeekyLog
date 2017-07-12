@@ -24,17 +24,17 @@
     <h2>Bots</h2> 
     
     <div class='table'>
-        <h3>Googlebot Search <i>commas in UA field were removed</i></h3>
+        <h3>Googlebot Search <i>mobile & desktop search</i></h3>
         <div id="gbot-search"></div>
     </div> 
     
     <div class='table'>
-        <h3>All Googlebot <i>commas in UA field were removed</i></h3>
+        <h3>All Googlebot <i>Images, Ads, Mobile, Search, ...</i></h3>
         <div id="gbot"></div>
     </div> 
     
     <div class='table'>
-        <h3>All bots <i>commas in UA field were removed</i></h3>
+        <h3>All bots <i>every detected spider, bot or crawler</i></h3>
         <div id="bot"></div>
     </div> 
     
@@ -59,8 +59,8 @@
                 <div class="col l4 offset-l2 s12">
                     <h5 class="white-text">Links</h5>
                     <ul>                        
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Github</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">@tiropcom</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Get the source code on Github</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">Follow me on Twitter : @tiropcom</a></li>
                         <li><a class="grey-text text-lighten-3" href="http://www.tirop.com/">http://www.tirop.com/</a></li>
                     </ul>
               </div>
@@ -76,11 +76,11 @@
     <script src="js/d3.v4.min.js"></script>
     <script src="js/geeky-log.js"></script>
     <script> 
-    createTable( "gbot-search", "ua-gbot-search.csv", "User Agent", 50 );
-    createTable( "gbot", "ua-gbot.csv", "User Agent", 50 );
-    createTable( "bot", "ua-bot.csv", "User Agent", 50 );
-    createDataLink( "gBotSearchIPs", "okIps.csv");
-    createDataLink( "fakeGbotIPs", "fakeGbotIPs.csv");
+    createTableTSV( "gbot-search", "ua-gbot-search.tsv", "User Agent", 50 );
+    createTableTSV( "gbot", "ua-gbot.tsv", "User Agent", 50 );
+    createTableTSV( "bot", "ua-bot.tsv", "User Agent", 50 );
+    createDataLink( "gBotSearchIPs", "gSearchIPs.tsv");
+    createDataLink( "fakeGbotIPs", "fakeGbotIPs.tsv");
     
     
     var stats = d3.json('logs/' + directory + "/global.json", function(error, data) 

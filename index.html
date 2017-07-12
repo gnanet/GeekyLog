@@ -82,8 +82,8 @@
                 <div class="col l4 offset-l2 s12">
                     <h5 class="white-text">Links</h5>
                     <ul>                      
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Github</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">@tiropcom</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/VictorVila/GeekyLog">Get the source code on Github</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://twitter.com/tiropcom">Follow me on Twitter : @tiropcom</a></li>
                         <li><a class="grey-text text-lighten-3" href="http://www.tirop.com/">http://www.tirop.com/</a></li>
                     </ul>
               </div>
@@ -150,7 +150,7 @@
         .padding(1.5);
 
     // loading data
-    d3.csv('logs/' + directory + "/urls-gbot-top-50.csv", function(d) 
+    d3.tsv('logs/' + directory + "/urls-gbot-top-50.tsv", function(d) 
     {
       d.value = +d.value;
       if (d.value) return d;
@@ -166,6 +166,8 @@
             {
                 // drop extensions
                 id=id.replace(/.html|.xml|.php|.txt/, '')
+                id=id.replace('.css', '_css');
+                id=id.replace('.js', '_js');
                 // bug with home which is '.'
                 if (id === '.') id = '.home';
                 
