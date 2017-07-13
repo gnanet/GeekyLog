@@ -198,11 +198,11 @@ echo "URLs"
 echo -e "\t- Top URLs 'search' googlebot"
 #cat "logs/${path}/"googlebotsearch.log | awk '$7!~".txt|.css|.js|.jpg|.png|.gif|.jpeg"  {print $7}' | tr '/' '.' |  sed -e 's/\(.php\)*$//g' | sed -e 's/\(.html\)*$//g' | sort | uniq -c | sort -k1,1nr | awk 'BEGIN {print "id,value"} $2!="" {print $2"\t"$1}' > "logs/${path}/"urls-gbot.tsv
 
-cat "logs/${path}/"googlebotsearch.log | awk '$7!~".jpg|.png|.gif|.jpeg"  {print $7}' | tr '/' '.' |  sed -e 's/\(.php\)*$//g' | sed -e 's/\(.html\)*$//g' | sort | uniq -c | sort -k1,1nr | awk 'BEGIN {print "id\tvalue"} $2!="" {print $2"\t"$1}' > "logs/${path}/"urls-gbot.tsv
+cat "logs/${path}/"googlebotsearch.log | awk '$7!~".jpg|.png|.gif|.jpeg"  {print $7}' |  sed -e 's/\(.php\)*$//g' | sed -e 's/\(.html\)*$//g' | sort | uniq -c | sort -k1,1nr | awk 'BEGIN {print "id\tvalue"} $2!="" {print $2"\t"$1}' > "logs/${path}/"urls-gbot.tsv
 
 
 # Top 50 URL hitted by googlebot search : bulles
-cat "logs/${path}/"urls-gbot.tsv | head -n50 > "logs/${path}/"urls-gbot-top-50.tsv
+cat "logs/${path}/"urls-gbot.tsv | tr '/' '.' | head -n50 > "logs/${path}/"urls-gbot-top-50.tsv
 
 # broken links 
 echo -e "\t- Broken links"
@@ -319,5 +319,10 @@ echo '"baiduHits":' ${baiduHits} >> "logs/${path}/"global.json
 
 echo "}"  >> "logs/${path}/"global.json
 
+# Maintain list of projects
+cd logs
+projects=`ls -d */ | cut -f1 -d'/'`
+cd ..
+echo "${projects}" > logs/projects.txt
 
 exit
