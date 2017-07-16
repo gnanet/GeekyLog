@@ -3,7 +3,7 @@
 |   -------------------------------------
 |   June 2017 - Victor VILA
 |
-|   Utilities for creating charts & tables
+|   Utilities for creating charts & tablesè
 |   Based on d3js and Mike Bostock code
 |
 */
@@ -21,8 +21,8 @@
 	 *  creates the menu & appends get param
 	 */	 
         
-	var menu = '<li><a href="index.html?d=' + directory + '">Home</a></li>';
-	menu    += '<li><a href="actives.html?d=' + directory + '">Active pages</a></li>';
+	var menu = '<li><a href="home.html?d=' + directory + '">Home</a></li>';
+	menu    += '<li><a href="actives.html?d=' + directory + '">Activity</a></li>';
 	menu    += '<li><a href="bots.html?d=' + directory + '">Bots</a></li>';
 	menu    += '<li><a href="broken.html?d=' + directory + '">Broken links</a></li>'; 
 	menu    += '<li><a href="status.html?d=' + directory + '">Status</a></li>';
@@ -73,7 +73,7 @@
             .outerRadius(radius - 40)
             .innerRadius(radius - 40);
 
-        d3.csv( 'logs/' + directory + "/" + dataFile, 
+        d3.tsv( 'logs/' + directory + "/" + dataFile, 
             function(d) 
             { 
               d.value = +d.value;
@@ -136,7 +136,7 @@
             var a      = document.createElement('a'); 
             var p      = document.createElement('p');
             a.textContent = 'raw data'; 
-            a.href = directory + "/" + dataFile;
+            a.href = 'logs/' + directory + "/" + dataFile;
             a.setAttribute('class', 'rawData waves-effect waves-teal btn');
             p.appendChild( a )
             document.getElementById( htmlEl ).appendChild( p );
@@ -243,7 +243,7 @@
 	        { 
                 // create the data link
                 var t = '<p><a class="rawData waves-effect waves-teal btn"'
-                t    += 'href="' + directory + "/" + dataFile + '">raw data</a></p>'; 
+                t    += 'href="' + 'logs/' + directory + "/" + dataFile + '">raw data</a></p>'; 
                 
 	            let data = xhr.responseText;  
 	            //console.log(data)	            
@@ -255,8 +255,79 @@
                     try 
                     {
                         var line = lines[ i ].split(',');
-                        // calculate total even in case of limit or blank url
-                        total += parseInt( line[1].trim() ); 
+                        // calculate total. Even in case of limit or blank url
+                        total += parseInt( line[1].trim() ) | 0; 
+                        if ( line[0] == null || line[0] == '' ) continue;
+                        if ( i > limit ) continue;
+                        keys.push( line[1].trim() )
+                        values.push( line[0] )
+                    }
+                    catch (e) { console.log(e) }
+                }
+                
+                t += "<table width='90%'><thead>";
+                t += '<tr><th>Hits</th><th>%</th><th>';
+                t += label + '</th></tr></thead>';
+                t += '<tfoot><tr><td>' + total 
+                t += '</td><td>100%</td><td>All</td></tr></tfoot>';
+                
+                for ( let i = 0 ; i < keys.length ; i++)
+                {
+                    var percentage = (( keys[i] * 100 ) / total ).toFixed(1);
+                    //if ( percentage < 1 ) continue;
+                    t += '<tr><td>' + keys[i] + '</td>';
+                    t += '<td>' + percentage + '%</td>';
+                    t += '<td>' + values[i] + '</td></tr>';
+                }        
+                t += '</table>'; 
+                document.getElementById( id ).innerHTML = t;
+	            
+//            	console.log('table: ' + id  + ', rows: ' + keys.length) 
+            } // data ok
+        } // xhr
+        xhr.send( null );
+	};
+	
+	
+ 
+	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  createTableTSV
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  generates an html table
+	 *  @param htmlEl : element where the table will be injected
+	 *  @param dataFile : relative path to data file (csv) 
+	 *  @param label : text to show in the values column 
+	 *  @param limit : number of items to show 
+	 */
+	
+	
+	const createTableTSV = function ( id, dataFile, label, limit )
+	{ 	
+	    console.log('create table ' + directory + "/" + dataFile)
+	    let xhr = new XMLHttpRequest();
+	    xhr.overrideMimeType( "application/json" );
+	    xhr.open( 'GET', 'logs/' + directory + "/" + dataFile, true );
+	    xhr.onreadystatechange = () =>
+	    {
+	        if ( xhr.readyState === 4 && xhr.status === 200 )
+	        { 
+                // create the data link
+                var t = '<p><a class="rawData waves-effect waves-teal btn"'
+                t    += 'href="' + 'logs/' + directory + "/" + dataFile + '">raw data</a></p>'; 
+                
+	            let data = xhr.responseText;  
+	            //console.log(data)	            
+	            var keys = [], values = [], total = 0;
+	            var lines = data.split( reNL );
+		
+                for ( let i = 0 ; i < lines.length ; i++ )
+                { 
+                    try 
+                    {
+                        var line = lines[ i ].split('\t');
+                        if (line[1] == undefined) continue;
+                        // calculate total. Even in case of limit or blank url
+                        total += parseInt( line[1].trim() ) | 0; 
                         if ( line[0] == null || line[0] == '' ) continue;
                         if ( i > limit ) continue;
                         keys.push( line[1].trim() )
@@ -291,6 +362,57 @@
 	
 	
  
+	
+	
+ 
+	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  createTableList
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  generates an html table
+	 *  @param htmlEl : element where the table will be injected
+	 *  @param dataFile : relative path to data file (csv) 
+	 *  @param label : text to show in the values column 
+	 *  @param limit : number of items to show 
+	 */
+	
+	
+	const createTableList = function ( id, dataFile, label, limit )
+	{ 	
+	    console.log('create table ' + directory + "/" + dataFile)
+	    let xhr = new XMLHttpRequest();
+	    xhr.overrideMimeType( "application/json" );
+	    xhr.open( 'GET', 'logs/' + directory + "/" + dataFile, true );
+	    xhr.onreadystatechange = () =>
+	    {
+	        if ( xhr.readyState === 4 && xhr.status === 200 )
+	        { 
+                // create the data link
+                var t = '<p><a class="rawData waves-effect waves-teal btn"'
+                t    += 'href="' + 'logs/' + directory + "/" + dataFile + '">raw data</a></p>'; 
+                
+	            let data = xhr.responseText;   
+                
+                t += "<table width='90%'>";
+                t += '<thead><tr><th>' + label + 'Hits</th></tr></thead>'; 
+                
+	            var lines = data.split( reNL );
+		
+                for ( let i = 0 ; i < lines.length ; i++ )
+                { 
+                    if (i > limit) continue;
+                    if (lines[i] == '') continue;
+                    t += '<tr><td>' + lines[i] + '</td></tr>';
+                }        
+                t += '</table>'; 
+                document.getElementById( id ).innerHTML = t; 
+            } // data ok
+        } // xhr
+        xhr.send( null );
+	};
+	
+	
+	
+ 
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 *  createTable2
 	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -314,7 +436,7 @@
 	        {  
                 // create the data link
                 var t = '<p><a class="rawData waves-effect waves-teal btn"'
-                t    += 'href="' + directory + "/" + dataFile + '">raw data</a></p>'; 
+                t    += 'href="' + 'logs/' + directory + "/" + dataFile + '">raw data</a></p>'; 
                 
 	            let data = xhr.responseText;  
 	            //console.log(data)	            
@@ -325,7 +447,7 @@
                 { 
                     try 
                     {
-                        var line = lines[ i ].split(',');
+                        var line = lines[ i ].split('\t');
                         // calculate total even in case of limit or blank url
                         var stotal = parseInt( line[0].trim() ); 
                         if ( Number.isInteger(stotal) ) total += stotal; 
@@ -475,7 +597,7 @@
             .range([/*"#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56",*/
             "#82b1ff","#2196f3","#fdd835", "#ff8c00", "#f44336" ]);
 
-        d3.csv( 'logs/' + directory + "/" + dataFile, function(d, i, columns) 
+        d3.tsv( 'logs/' + directory + "/" + dataFile, function(d, i, columns) 
         {
           for (i = 1, t = 0; i < columns.length; ++i)
           {
