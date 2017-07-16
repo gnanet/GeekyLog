@@ -1,38 +1,56 @@
+/* GeekyLog CSS 
+----------------
+> overrides to materialize CSS
+> extra styles
+
+*/
 
 body { font: 1rem "Lato", "Open sans", Arial, sans-serif; padding:2%; }
 .btn, .btn-large {/*background-color: #f44336 */}
 h3 i {font-size:.8rem;}
 
-/* menu */
-#logo { padding-left: 20px; }
 
-/* cards */
+/* menu 
+--------*/
+#logo { padding-left: 20px; font-size: 1.8rem}
+
+
+/* cards 
+----------*/
 .card .card-content p { margin: 5px 0; }
 .card-content p span { color: #ef9a9a; color: #eee; }
-.card-content p i {  display: inline-block; width: 150px; font-style: normal;
+.card-content p i {  display: inline-block; width: 7rem; font-style: normal;
 background: #ccc; text-align: right; color: #333; padding: 0 5px 0 0; }
+.card .card-content span.sub-title { font-size: 1.2rem; font-weight: 600; margin: 15px 0 0; }
 
+
+/* tables 
+----------*/
+.table { margin-top:80px;}
+table { border: 1px solid #ddd}
+thead td {background:#ddd;}
+tfoot td {background:#ddd; }
+
+
+/* pie 
+----------*/
+.arc text { font: 10px sans-serif; text-anchor: middle; }
+.arc path { stroke: #fff; }
 
 #mainStats h2 { margin: 2rem 0 .5rem;}
 #mainStats canvas { max-width: 300px; }
 
 #statusAll, #statusSearch { /*height: 280px;*/ }
 #statusBar { margin: 40px auto; }
-
 @media (min-width: 1100px)
 {
     .col2 div:nth-child(even) {float:left; width: 45%; }
     .col2 div:nth-child(odd)  {float:right; width: 45%; }
 }
 
-.table { margin-top:80px;}
-table { border: 1px solid #ddd}
-thead td {background:#ddd;}
-tfoot td {background:#ddd; }
 
-.arc text { font: 10px sans-serif; text-anchor: middle; }
-.arc path { stroke: #fff; }
-
+/* clearfix 
+------------*/
 .clearfix:after {
   visibility: hidden;
   display: block;
