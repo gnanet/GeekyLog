@@ -7,7 +7,7 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta charset='utf8'>
-    <title>SeoLog</title>
+    <title>GeekyLog - Active ans non-active pages</title>
     <link rel="stylesheet" href="css/materialize.min.css"> 
     <link rel="stylesheet" href="css/geeky-log.css"> 
 </head>
@@ -15,27 +15,47 @@
   
     <nav>
         <div class="nav-wrapper">
-          <b id="logo">GeekyLog</b>
+          <a id="logo" href="index.html">GeekyLog</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
           </ul>
         </div>
     </nav> 
-    <h1>Active pages</h1>
+    <h1>Active & expplored pages</h1>
+    <!--<p><a href='#activePages'>Active pages</a> | 
+    <a href='#inactivePages'>Inactive pages</a> | 
+    <a href='#exploredPages'>Explored pages</a> | 
+    <a href='#unexploredPages'>Unexplored pages</a></p>-->
     
         <div id="ratio"> 
             <svg width="500" height="250"></svg>
         </div> 
     <div class='table'>
-        <h3>Active pages</h3>
+        <h3 id="activePages">Active pages</h3>
         <p>Crawled URLs by a search googlebot (not an AdsBot or images googlebot), that have generated SEO trafic.</p>
         <div id="actives"></div>
     </div> 
     
     <div class='table'>
-        <h3>Inactive pages</h3>
+        <h3 id="inactivePages">Inactive pages</h3>
         <p>URLs that were crawled by a search googlebot (not an AdsBot or images googlebot), and that actually didn't received any SEO trafic.</p>
-        <div id="unuseful"></div>
+        <div id="inactives"></div>
     </div> 
+    
+    
+    <div class='table'>
+        <h3 id="exploredPages">Explored pages</h3>
+        <p>URLs explored by a search googlebot (not an AdsBot or images googlebot).</p>
+        <div id="explored"></div>
+    </div> 
+    
+    
+    <div class='table'>
+        <h3 id="unexploredPages">Unexplored pages</h3>
+        <p>URLs not yet explored (not in the given logs) by a search googlebot.</p>
+        <div id="unexplored"></div>
+    </div> 
+    
+    
     <p></p>
     
     <footer class="page-footer">
@@ -43,7 +63,7 @@
             <div class="row">
                 <div class="col l6 s12">
                     <h5 class="white-text">GeekyLog</h5>
-                    <p class="grey-text text-lighten-4">Data Mining : Linux commands</br>Data visualization : d3js + materializecss<br>All data is available in CSV</p>
+                    <p class="grey-text text-lighten-4">Data Mining : Linux commands</br>Data visualization : d3js + materializecss<br>All data is available in TSV</p>
                 </div>
                 <div class="col l4 offset-l2 s12">
                     <h5 class="white-text">Links</h5>
@@ -71,14 +91,17 @@
         
     var stats = d3.json('logs/' + directory + "/global.json", function(error, data) 
     {
+        if (error) console.warn(error)
         var d = '[{"key":"actives", "value":' + data.pagesActives + ', "color": "#82b1ff"},';
-        d+= '{"key": "unuseful", "value":' + data.pagesInactives + ', "color": "#ffab91"}]';
+        d+= '{"key": "inactives", "value":' + data.pagesInactives + ', "color": "#ffab91"}]';
         
         createPieData( 'ratio' , d );  
     });
     
-    createTableTSV( "actives", "urls-actives.tsv", "URL", 20 );
-    createTableTSV( "unuseful", "urls-unuseful.tsv", "URL", 20 );
+    createTableTSV( "actives",      "pages-actives.tsv",    "URL", 20 );
+    createTableList( "inactives",    "pages-inactives.tsv",  "URL", 20 );
+    createTableList( "explored",     "pages-explored.tsv",   "URL", 20 );
+    createTableList( "unexplored",   "pages-unexplored.tsv", "URL", 20 );
     </script>
 </body>
 </html>
