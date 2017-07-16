@@ -89,23 +89,23 @@ do
 	then
 		ip=`host $hostName | cut -d" " -f4`
 		if [ $line == $ip ]
-		then
-			verifiedIps[$line]="1"
-			echo -e "${line}" >> "logs/${path}/"gSearchIPs.tsv
-			echo -e "\t $line : OK"
-		else
-			echo -e "\t $line : Seems a fake googlebot"
-			fake=1
-		fi
+	then
+		verifiedIps[$line]="1"
+		echo -e "${line}" >> "logs/${path}/"gSearchIPs.tsv
+		echo -e "\t $line : OK"
 	else
 		echo -e "\t $line : Seems a fake googlebot"
 		fake=1
 	fi
+else
+	echo -e "\t $line : Seems a fake googlebot"
+	fake=1
+fi
 
-	if [ "$fake" = 1 ]
-	then
-		echo -e "${line}" >> "logs/${path}/"fakeGbotIPs.tsv
-	fi
+if [ "$fake" = 1 ]
+then
+	echo -e "${line}" >> "logs/${path}/"fakeGbotIPs.tsv
+fi
 
 
 done < "logs/${path}/"ips.tmp
@@ -113,8 +113,8 @@ done < "logs/${path}/"ips.tmp
 
 # Start filtering
 echo "" > "logs/${path}/"googlebotsearch.log
- 
-echo -e "\t- filtering googlebot logs with verifyed ips"
+
+echo -e "\t- filtering googlebot logs with verified ips"
 while read -r line 
 do
 	ip=`echo $line | cut -d" " -f1`
@@ -125,6 +125,7 @@ do
 done < "logs/${path}/"googlebotsearch.tmp
 
 # Removing .tmp files
+echo -e "\t- Removing temporal files"
 rm "logs/${path}/"googlebotsearch.tmp
 rm "logs/${path}/"ips.tmp
 
@@ -178,6 +179,7 @@ echo -e "\tTimeline"
 
 
 cat "logs/${path}/"googlebotsearch.log | cut  -d' ' -f4,7,9 | sed  's/\[//g'| cut -c1-6,21- | sort -u | cut -d' ' -f1,3 | sort | uniq -c | sed 's/\//-/g' |  sed 's/Jan/01/g; s/Feb/02/g; s/Mar/03/g; s/Apr/04/g; s/May/05/g; s/Jun/06/g; s/Jul/07/g; s/Aug/08/g; s/Sep/09/g; s/Oct/10/g; s/Nov/11/g; s/Dec/12/g;' | awk '$2~/^[0-9]{2}-[0-9]{2}/ {print $2" "$3" "$1}' | awk -F "[ -]*" '{print $2"-"$1" "$3" "$4}' | awk '{dic[$1][$2] = $3} END { for (key in dic) { print key"\t"dic[key][200]"\t"dic[key][301]"\t"dic[key][302]"\t"dic[key][404]"\t"dic[key][500] } }' | sed 's/,,,/,0,0,/g ; s/,,/,0,/g;' | sed -e 's/,$/,0/g'| sort -t$'-' -k 2M -k1 | awk 'BEGIN {print "date\t200\t301\t302\t404\t500"} {print $0}' > "logs/${path}/"status-by-date.tsv
+
 
 # Array of 404 by date   
 echo -e "\tTimeline 404"
@@ -243,28 +245,71 @@ cat "logs/${path}/"googlebot.log | grep Googlebot-Image | awk '{print $7}' | sor
 googleImageHits=$(grep Googlebot-Image "logs/${path}/"googlebot.log)
 
 
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 7. Actives
+# 7. Pages
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+echo "Pages"
+echo -e "\t- Total pages"
+cat "logs/${path}/"allLogs.log | awk '$9<300 && $7!~".css|.js|.txt|.jpg|.jpeg|.png|.gif" {print $7}' | sort | uniq | sort > "logs/${path}/"pages-total.tsv
+
+echo -e "\t- Explored pages by googlebot search"
+cat -v "logs/${path}/"googlebotsearch.log | awk '$9<300 && $7!~".css|.js|.txt|.jpg|.jpeg|.png|.gif" {print $7}' | sort | uniq | sort > "logs/${path}/"pages-explored.tsv
+
+echo -e "\t- Unexplored pages by googlebot search"
+comm -23 "logs/${path}/"pages-total.tsv  "logs/${path}/"pages-explored.tsv  | sort | uniq > "logs/${path}/"pages-unexplored.tsv
+
+echo -e "\t- CSS"
+cat -v "logs/${path}/"allLogs.log | awk '$7~".css" {print $7}' | sort | uniq -c | sort -rn | awk '{gsub(/ */,"",$1)} {print $2"\t"$1}'   > "logs/${path}/"assets-css.tsv
+
+echo -e "\t- JS" 
+cat -v "logs/${path}/"allLogs.log | awk '$7~".js" {print $7}' | sort | uniq -c | sort -rn | awk '{gsub(/ */,"",$1)} {print $2"\t"$1}'   > "logs/${path}/"assets-js.tsv
+
+echo -e "\t- Images"
+cat -v "logs/${path}/"allLogs.log | awk '$7~".jpg|.jpeg|.png|.gif" {print $7}' | sort | uniq -c | sort -rn | awk '{gsub(/ */,"",$1)} {print $2"\t"$1}'   > "logs/${path}/"assets-images.tsv
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 8. Actives
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # active pages    
 echo "Active pages"
 echo -e "\t- actives"
-cat "logs/${path}/"allLogs.log | awk '$11~"google" && $7!~".css|.js|.jpg|.png|.gif|.jpeg" {print $7}' | sort | uniq | sort > "logs/${path}/"urls-actives.log
+cat "logs/${path}/"allLogs.log | awk '$11~"google" && $7!~".css|.txt|.js|.jpg|.png|.gif|.jpeg" {print $7}' | sort | uniq -c | sort -rn | awk '{gsub(/ */,"",$1)} {print $2"\t"$1}' > "logs/${path}/"pages-actives.tsv
 
-# active pages csv
-cat "logs/${path}/"allLogs.log | awk '$11~"google" && $7!~".css|.js|.jpg|.png|.gif|.jpeg" {print $7}' | sort | uniq -c | sort -rn | awk '{gsub(/ */,"",$1)} {print $2"\t"$1}' > "logs/${path}/"urls-actives.tsv
+cat "logs/${path}/"allLogs.log | awk '$11~"google" && $7!~".css|.txt|.js|.jpg|.png|.gif|.jpeg" {print $7}' | sort | uniq | sort > "logs/${path}/"pages-actives-list.tsv
+
+cat "logs/${path}/"pages-actives.tsv | awk '{print $1}' | sort > "logs/${path}/"pages-actives-list.tsv
+
 
 # non active pages - indexes
 echo -e "\t- non actives"
-cat "logs/${path}/"googlebotsearch.log | awk '$7!~".css|.js|.jpg|.png|.gif|.jpeg"  {print $7}' | sort | uniq > "logs/${path}/"urls-gbot.log
-comm -23 "logs/${path}/"urls-gbot.log "logs/${path}/"urls-actives.log | sort | uniq -c | sort -rn | awk '{print $2"\t"$1}' > "logs/${path}/"urls-unuseful.tsv
+comm -23 "logs/${path}/"pages-explored.tsv "logs/${path}/"pages-actives-list.tsv > "logs/${path}/"pages-inactives.tsv
 
+# Status of all served files
+echo -e "\t- Status of all served files"
+cat "logs/${path}/"allLogs.log | awk '{print $9}' | sort | uniq -c | awk '{print $2" "$1}' > status.tsv
+declare -A aa
+while read -r line
+do
+	a=`echo "$line" | cut -d" " -f1`
+	b=`echo "$line" | cut -d" " -f2`
+	aa[$a]=$b
+done < status.tsv
+status200="${aa[200]:-0}"
+status301="${aa[301]:-0}"
+status302="${aa[302]:-0}"
+status403="${aa[403]:-0}"
+status404="${aa[404]:-0}"
+status410="${aa[410]:-0}"
+status5xx="${aa[5xx]:-0}"
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 8. Global stats
+# 9. Global stats
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -272,14 +317,30 @@ echo "Global Stats"
 
 
 # General
-totalHits=$(cat -v "logs/${path}/"allLogs.log | wc -l)
-totalURLs=$(cat -v "logs/${path}/"allLogs.log | awk '{print $7}' | sort | uniq  | wc -l) 
+echo -e "\t- General"
+hitsTotal=$(cat -v "logs/${path}/"allLogs.log | wc -l)
+URLsTotal=$(cat -v "logs/${path}/"allLogs.log | awk '{print $7}' | sort | uniq  | wc -l)
 URLsActives=$(cat -v "logs/${path}/"allLogs.log | awk '$11~"google" {print $7}' | wc -l)
-pagesActives=$(cat "logs/${path}/"urls-actives.tsv | wc -l)
-pagesInactives=$(cat "logs/${path}/"urls-unuseful.tsv | wc -l)
+
+
+echo -e "\t- Pages"
+pagesTotal=$(cat -v "logs/${path}/"pages-total.tsv  | wc -l) 
+pagesExplored=$(cat -v "logs/${path}/"pages-explored.tsv | wc -l)
+pagesUnexplored=$(cat -v "logs/${path}/"pages-unexplored.tsv | wc -l) 
+pagesActives=$(cat "logs/${path}/"pages-actives-list.tsv | wc -l)
+pagesInactives=$(cat "logs/${path}/"pages-inactives.tsv | wc -l)
+
+
+# Assets
+echo -e "\t- Assets"
+css=$(cat "logs/${path}/"assets-css.tsv | wc -l)
+js=$(cat "logs/${path}/"assets-js.tsv | wc -l)
+images=$(cat "logs/${path}/"assets-images.tsv | wc -l)
 
 
 # Googlebot
+
+echo -e "\t- Googlebot"
 gBotsHits=$(cat "logs/${path}/"google.log | wc -l)
 gBotsErrors=$(cat "logs/${path}/"googlebot.log | awk '$7>399 {print $7}' | wc -l)
 gSearchHits=$(cat "logs/${path}/"googlebotsearch.log | wc -l)
@@ -288,6 +349,8 @@ gImgHits=$(cat "logs/${path}/"googlebot.log | grep Googlebot-Image | wc -l)
 
 
 # bots hits
+
+echo -e "\t- Bots hits"
 bingHits=$(cat "logs/${path}/"allLogs.log | grep -i bingbot | wc -l)
 yandexHits=$(cat "logs/${path}/"allLogs.log | grep -i yandex | wc -l)
 baiduHits=$(cat "logs/${path}/"allLogs.log | grep -i baidu | wc -l)
@@ -297,12 +360,28 @@ bots=$(cat -v "logs/${path}/"allLogs.log | awk '$1~"^[0-9]{1,3}." {print $12$13$
 
 echo "{" > "logs/${path}/"global.json
 
-echo '"totalHits":' ${totalHits}',' >> "logs/${path}/"global.json
-echo '"totalURLs":' ${totalURLs}',' >> "logs/${path}/"global.json
+echo '"hitsTotal":' ${hitsTotal}',' >> "logs/${path}/"global.json
+echo '"URLsTotal":' ${URLsTotal}',' >> "logs/${path}/"global.json
 echo '"URLsActives":' ${URLsActives}',' >> "logs/${path}/"global.json
+echo '"pagesTotal":' ${pagesTotal}',' >> "logs/${path}/"global.json
+echo '"pagesExplored":' ${pagesExplored}',' >> "logs/${path}/"global.json
+echo '"pagesUnexplored":' ${pagesUnexplored}',' >> "logs/${path}/"global.json
 echo '"pagesActives":' ${pagesActives}',' >> "logs/${path}/"global.json
 echo '"pagesInactives":' ${pagesInactives}',' >> "logs/${path}/"global.json
 
+
+echo '"status200":' ${status200}',' >> "logs/${path}/"global.json
+echo '"status301":' ${status301}',' >> "logs/${path}/"global.json
+echo '"status302":' ${status302}',' >> "logs/${path}/"global.json
+echo '"status403":' ${status403}',' >> "logs/${path}/"global.json
+echo '"status404":' ${status404}',' >> "logs/${path}/"global.json
+echo '"status410":' ${status410}',' >> "logs/${path}/"global.json
+echo '"status5xx":' ${status5xx}',' >> "logs/${path}/"global.json
+
+
+echo '"css":' ${css}',' >> "logs/${path}/"global.json
+echo '"js":' ${js}',' >> "logs/${path}/"global.json
+echo '"images":' ${images}',' >> "logs/${path}/"global.json
 
 echo '"gBotsHits":' ${gBotsHits}',' >> "logs/${path}/"global.json
 echo '"gBotsErrors":' ${gBotsErrors}',' >> "logs/${path}/"global.json
