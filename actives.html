@@ -20,15 +20,33 @@
           </ul>
         </div>
     </nav> 
-    <h1>Active & expplored pages</h1>
+    <h1>Active & explored pages</h1>
     <!--<p><a href='#activePages'>Active pages</a> | 
     <a href='#inactivePages'>Inactive pages</a> | 
     <a href='#exploredPages'>Explored pages</a> | 
     <a href='#unexploredPages'>Unexplored pages</a></p>-->
     
-        <div id="ratio"> 
+    <div>
+        <svg id='activity' height='240'></svg>
+        <ul>
+            <li><b>Total :</b> number of different pages founded in the logs</li>
+            <li><b>Explored :</b> number of pages explored at least 1 time by 'search' googlebot</li>
+            <li><b>Active :</b> explored pages that received SEO trafic</li>
+        </ul>
+    </div>
+            
+    <div class="col2 clearfix table">
+        <div id="ratioActives">
+            <h3>Active vs inactive pages</h3>
             <svg width="500" height="250"></svg>
         </div> 
+        <div id="ratioExplored">
+            <h3>Explored vs ignored pages</h3>
+            <svg width="500" height="250"></svg> 
+        </div> 
+    </div>
+    
+        
     <div class='table'>
         <h3 id="activePages">Active pages</h3>
         <p>Crawled URLs by a search googlebot (not an AdsBot or images googlebot), that have generated SEO trafic.</p>
@@ -94,8 +112,29 @@
         if (error) console.warn(error)
         var d = '[{"key":"actives", "value":' + data.pagesActives + ', "color": "#82b1ff"},';
         d+= '{"key": "inactives", "value":' + data.pagesInactives + ', "color": "#ffab91"}]';
+        var e = '[{"key":"explored", "value":' + data.pagesExplored + ', "color": "#82b1ff"},';
+        e+= '{"key": "unExplored", "value":' + data.pagesUnexplored + ', "color": "#ffab91"}]'; 
         
-        createPieData( 'ratio' , d );  
+        createPieData( 'ratioActives' , d );  
+        createPieData( 'ratioExplored' , e );  
+        
+        
+        var data = [
+            {   name: "Total",        
+                value: data.pagesTotal,    
+                color: '#03A9F4' },
+                
+            {   name: "Explored", 
+                value: data.pagesExplored, 
+                color: '#1E88E5'  }, 
+                
+            {   name: "Active",      
+                value: data.pagesActives,     
+                color: '#3F51B5'  }
+        ];
+        
+        createStackedBars( '#activity', data );
+    
     });
     
     createTableTSV( "actives",      "pages-actives.tsv",    "URL", 20 );

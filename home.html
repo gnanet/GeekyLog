@@ -28,14 +28,19 @@
         <div class="col s4"> 
           <div class="card blue-grey darken-3">
             <div class="card-content white-text ">
-              <span class="card-title">Content</span>
+              <span class="card-title">Global content</span>
+              
+              <span class="card-title sub-title">Hits</span> 
+              <p><i>Total Hits</i> <span id='hitsTotal'></span> </p>
+              
               <span class="card-title sub-title">Inventory</span> 
               <p><i>Total URLs</i> <span id='URLsTotal'></span></p>
               <p><i>Total Pages</i> <span id='pagesTotal'></span> </p>
               <p><i>Total CSS</i> <span id='assetsCss'></span></p>
               <p><i>Total JS</i> <span id='assetsJs'></span></p>
               <p><i>Total Images</i> <span id='assetsImages'></span></p>
-              <span class="card-title sub-title">Global status</span> 
+              
+              <span class="card-title sub-title">Hits main status</span> 
               <p><i>200</i> <span id='status200'></span></p>
               <p><i>301</i> <span id='status301'></span></p>
               <p><i>302</i> <span id='status302'></span></p>
@@ -51,9 +56,7 @@
         <div class="col s4"> 
           <div class="card blue-grey darken-3">
             <div class="card-content white-text ">
-              <span class="card-title">Hits</span>
-              <span class="card-title sub-title">General</span> 
-              <p><i>Total Hits</i> <span id='hitsTotal'></span> </p>
+              <span class="card-title">Bots</span>
               <!--<p><i>Pages</i> <span id='hitsTotal'></span> </p>
               <p><i>CSS</i> <span id='hitsTotal'></span> </p>
               <p><i>JS</i> <span id='hitsTotal'></span> </p> 
@@ -69,6 +72,10 @@
               <p><i>Gbot Search</i> <span id='gSearchHits'></span> </p>
               <p><i>Gbot Img</i> <span id='gImgHits'></span> </p>
               <!--<p><i>G bots errors</i> <span id='gBotsErrors'></span> </p>-->
+              
+              <span class="card-title sub-title">Googlebot 'Search' used IPs </span>
+              <p><i>Verified IPs</i> <span id='gSearchIPs'></span> </p>
+              <p><i>Fake IPs</i> <span id='fakeGbotIPs'></span> </p>
             </div>  
           </div> 
         </div>
@@ -88,9 +95,15 @@
               <p><i>Actives</i> <span id='pagesActives'></span> </p>
               <p><i>Inactives</i> <span id='pagesInactives'></span> </p>
                
-              <span class="card-title sub-title">IPs</span>
-              <p><i>Verified IPs</i> <span id='gSearchIPs'></span> </p>
-              <p><i>Fake IPs</i> <span id='fakeGbotIPs'></span> </p>
+              <span class="card-title sub-title">Gbot Search status</span> 
+              <p><i>200</i> <span id='statusGbot200'></span></p>
+              <p><i>301</i> <span id='statusGbot301'></span></p>
+              <p><i>302</i> <span id='statusGbot302'></span></p>
+              <p><i>403</i> <span id='statusGbot403'></span></p>
+              <p><i>404</i> <span id='statusGbot404'></span></p>
+              <p><i>410</i> <span id='statusGbot410'></span></p>
+              <p><i>5xx</i> <span id='statusGbot5xx'></span></p>
+              
             </div> 
           </div> 
         </div>
@@ -156,6 +169,14 @@
         document.getElementById('status404').innerHTML = data.status404;
         document.getElementById('status410').innerHTML = data.status410;
         document.getElementById('status5xx').innerHTML = data.status5xx;
+        
+        document.getElementById('statusGbot200').innerHTML = data.statusGbot200;
+        document.getElementById('statusGbot301').innerHTML = data.statusGbot301;
+        document.getElementById('statusGbot302').innerHTML = data.statusGbot302;
+        document.getElementById('statusGbot403').innerHTML = data.statusGbot403;
+        document.getElementById('statusGbot404').innerHTML = data.statusGbot404;
+        document.getElementById('statusGbot410').innerHTML = data.statusGbot410;
+        document.getElementById('statusGbot5xx').innerHTML = data.statusGbot5xx;
         
         document.getElementById('assetsCss').innerHTML = data.css;
         document.getElementById('assetsJs').innerHTML = data.js;

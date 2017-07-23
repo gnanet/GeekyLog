@@ -48,6 +48,10 @@ tfoot td {background:#ddd; }
     .col2 div:nth-child(odd)  {float:right; width: 45%; }
 }
 
+/* svg
+---------*/
+
+    svg:not(:root) { overflow: visible; }
 
 /* clearfix 
 ------------*/

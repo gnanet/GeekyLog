@@ -105,8 +105,8 @@
 	         var legend = svg.append("g")
 	            .attr("class", "legend") 
 	            .attr("height", 100)
-	            .attr("width", 150)
-                .attr('transform', 'translate(-50,50)')   
+	            .attr("width", 160)
+                .attr('transform', 'translate(-90,50)')   
             
             legend.selectAll('rect')
                .data(data)
@@ -699,4 +699,67 @@
         p.appendChild( a )
         document.getElementById( htmlEl ).appendChild( p );
     };
+    
 	
+	
+	
+		
+	
+	
+	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  createStackedBars
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 *  generates a stacked bars
+	 *  @param htmlEl : element where chart will be injected
+	 *  @param data : JSON { name, value, color },
+	 */
+		
+
+	const createStackedBars = function ( htmlEl, data )
+	{     
+        var width   = '100%', 
+            barH    = 80;
+        
+        var chart = d3.select( htmlEl )
+            .attr('width', width);
+        
+        var x = d3.scaleLinear()
+                .range( [0, width] );
+        
+        x.domain( [0, d3.max( data, function(d) { return d.value; } ) ]);
+        
+        chart.attr('heigth', barH * data.length );
+        
+        var total =  data[0].value; 
+        
+        var bar = chart.selectAll('g')
+            .data(data)
+            .enter()
+                .append('g')
+                .attr('transform', 
+                function(d, i) 
+                { 
+                    return "translate(0, " + i * barH + ")"; 
+                });
+                
+        bar.append('rect')  
+            .attr('y', function(d) { return 5; })
+            .attr('width', function(d) { return x( d.value ); })
+            .attr('height', function(d, i) { return barH * ( data.length - i) } )
+            .attr('fill', function(d) { return ( d.color ); });
+        
+        bar.append('text')
+            .attr('x', function(d) { return 3; })
+            .attr('y', barH / 2 )
+            .attr('dy', '.65em')
+            .text( function(d) 
+                { 
+                    var p = ((d.value * 100) / total).toFixed(2);
+                    return d.name + ': ' + d.value + ' (' + p + '%)'; 
+                })
+            .attr("font-size", "20px")
+            .attr("font-family", "Arial, sans-serif")
+            .attr("text-transform", "uppercase")
+            .style('fill', 'white');
+    
+	};

@@ -307,6 +307,25 @@ status404="${aa[404]:-0}"
 status410="${aa[410]:-0}"
 status5xx="${aa[5xx]:-0}"
 
+# Status of all served files to googlebot search
+echo -e "\t- Status of all served files gbot search"
+cat "logs/${path}/"googlebotsearch.log | awk '{print $9}' | sort | uniq -c | awk '{print $2" "$1}' > statusGbot.tsv
+declare -A bb
+while read -r line
+do
+	a=`echo "$line" | cut -d" " -f1`
+	b=`echo "$line" | cut -d" " -f2`
+	bb[$a]=$b
+done < statusGbot.tsv
+statusGbot200="${bb[200]:-0}"
+statusGbot301="${bb[301]:-0}"
+statusGbot302="${bb[302]:-0}"
+statusGbot403="${bb[403]:-0}"
+statusGbot404="${bb[404]:-0}"
+statusGbot410="${bb[410]:-0}"
+statusGbot5xx="${bb[5xx]:-0}"
+
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 9. Global stats
@@ -377,6 +396,15 @@ echo '"status403":' ${status403}',' >> "logs/${path}/"global.json
 echo '"status404":' ${status404}',' >> "logs/${path}/"global.json
 echo '"status410":' ${status410}',' >> "logs/${path}/"global.json
 echo '"status5xx":' ${status5xx}',' >> "logs/${path}/"global.json
+
+
+echo '"statusGbot200":' ${statusGbot200}',' >> "logs/${path}/"global.json
+echo '"statusGbot301":' ${statusGbot301}',' >> "logs/${path}/"global.json
+echo '"statusGbot302":' ${statusGbot302}',' >> "logs/${path}/"global.json
+echo '"statusGbot403":' ${statusGbot403}',' >> "logs/${path}/"global.json
+echo '"statusGbot404":' ${statusGbot404}',' >> "logs/${path}/"global.json
+echo '"statusGbot410":' ${statusGbot410}',' >> "logs/${path}/"global.json
+echo '"statusGbot5xx":' ${statusGbot5xx}',' >> "logs/${path}/"global.json
 
 
 echo '"css":' ${css}',' >> "logs/${path}/"global.json
