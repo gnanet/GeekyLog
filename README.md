@@ -39,6 +39,10 @@ The default directory structure is as follows :
 ### Name of the logs file
 The name of the file containing the logs must be "allLogs.log". This should be a text file, though the parser can ignore some binary junk.
 
+You can combine your log files with this command :
+	
+	cat *.log >> allLogs.log
+
 ### The parser : combined.bash
 This is the (for now) only parser avalaible. When you fire it, you should indicate the directory name where to look for logs. E.g :
 
@@ -67,3 +71,15 @@ These checks may slow down the parsing in some cases, but it's still faster comp
 
 
 ![GeekyLog Status page](http://www.tirop.com/img/geekyLog/geekyLog-status.png)
+
+
+## Common issues
+
+If the parser runs into problems, you should check if your logs are written in the "combined" format.
+
+Very often, hosting services add the domain name as the first column of each line. In those cases, you can easily remove that column :
+
+* First, create the "allLogs.tmp" file (temps as we aren going to modify it)
+* Second, run this command :
+
+	cut -f1 -d" " --complement allLogs.tmp > allLogs.log
