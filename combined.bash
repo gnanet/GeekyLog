@@ -1,4 +1,4 @@
-#!/bin/bash/
+#!/bin/bash
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Combined logs parser
@@ -22,7 +22,7 @@
 
 if [ -z $1 ]
 then
-  echo -e "\nUsage : \n\nseolog.bash directory in the logs/ folder where allLogs.log lives in\n"
+  echo -e "\nUsage: $(basename $0) PROJECT\n\tproject - the name of a directory in the logs/ folder where allLogs.log lives in\n"
   exit
 fi
 
